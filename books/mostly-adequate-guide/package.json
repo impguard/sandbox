@@ -13,7 +13,8 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha **/*_spec.js"
+    "test.all": "node_modules/.bin/mocha **/*_spec.js",
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",

@@ -25,9 +25,17 @@ function build () {
     yarn install
 }
 
-bake_task unittest "Tests everything"
+bake_task unittest.all "Tests everything"
+function unittest.all () {
+    yarn test.all
+}
+
+bake_task unittest "Tests spec files in matching subdirectory"
 function unittest () {
-    bake_echo_red "Does nothing yet"
+    local directory pattern
+    directory=$1
+    pattern="**/*$directory*/*_spec.js"
+    yarn test "$pattern"
 }
 
 bake_task clean "Cleans all installed dependencies"
