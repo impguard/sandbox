@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2093
+
+
+bake_task init "Initialize the exercises"
+function init () {
+    docker pull node:9.2.0
+}
+
+function nrun () {
+    exec docker run --rm -it \
+        --name yarn \
+        --workdir /workspace \
+        --volume "$(pwd)":/workspace \
+        node:9.2.0 "$@"
+}
+
+bake_task yarn "Runs yarn within the dockerized environment"
+function yarn () {
+    nrun yarn "$@"
+}
+
+bake_task build "Installs the project dependencies"
+function build () {
+    yarn install
+}
+
+bake_task unittest "Tests everything"
+function unittest () {
+    bake_echo_red "Does nothing yet"
+}
+
+bake_task clean "Cleans all installed dependencies"
+function clean () {
+    docker rmi node:9.2.0
+}
