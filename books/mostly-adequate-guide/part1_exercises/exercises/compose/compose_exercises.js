@@ -13,13 +13,6 @@ var CARS = [
   ];
 
 
-// Useful additional utility
-var trace = _.curry(function (m, v) {
-    console.log(m, v)
-    return v
-})
-
-
 // Exercise 1:
 // ============
 // use _.compose() to rewrite the function below. Hint: _.prop() is curried.
