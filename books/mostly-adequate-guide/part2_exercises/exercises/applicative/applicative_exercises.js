@@ -47,10 +47,6 @@ var game = _.curry(function(p1, p2) { return p1 + ' vs ' + p2; });
 //  ex4 :: IO String
 var ex4 = liftA2(game, getCache('player1'), getCache('player2'));
 
-
-
-
-
 // TEST HELPERS
 // =====================
 
