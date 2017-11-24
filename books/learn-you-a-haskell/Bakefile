@@ -18,5 +18,5 @@ function hrun ()
 bake_task repl "Start a haskell repl"
 function repl ()
 {
-    hrun
+    hrun ghci
 }
