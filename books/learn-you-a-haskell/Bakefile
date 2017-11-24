@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+bake_task init "Initialize the project"
+function init ()
+{
+    docker pull haskell:8.2.1
+}
+
+function hrun ()
+{
+    exec docker run -it --rm --name haskell \
+        --workdir /workspace \
+        --volume "$(pwd)":/workspace \
+        haskell:8.2.1 "$@"
+}
+
+bake_task repl "Start a haskell repl"
+function repl ()
+{
+    hrun
+}
