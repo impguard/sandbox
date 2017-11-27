@@ -20,3 +20,9 @@ function repl ()
 {
     hrun ghci
 }
+
+bake_task shell "Start the environment as a shell"
+function shell ()
+{
+    hrun /bin/bash
+}
