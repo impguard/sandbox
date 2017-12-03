@@ -58,4 +58,8 @@ numLongChains = length $ filter ((>15) . length . chain) [1..100]
 shadowName = filter
     where filter = 3
 
+data Shape = Circle Float Float Float | Rectangle Float Float Float Float deriving (Show)
 
+surface :: Shape -> Float
+surface (Circle _ _ r) = pi * r ^ 2
+surface (Rectangle x1 y1 x2 y2) = abs $ (y2 - y1) * (x2 - x1)
