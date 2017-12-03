@@ -26,3 +26,9 @@ function shell ()
 {
     hrun /bin/bash
 }
+
+bake_task ghc "Runs the haskell compiler"
+function ghc ()
+{
+    hrun ghc --make "$@"
+}

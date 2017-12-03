@@ -63,3 +63,23 @@ data Shape = Circle Float Float Float | Rectangle Float Float Float Float derivi
 surface :: Shape -> Float
 surface (Circle _ _ r) = pi * r ^ 2
 surface (Rectangle x1 y1 x2 y2) = abs $ (y2 - y1) * (x2 - x1)
+
+data Person = Person { firstName :: String
+                     , lastName :: String
+                     , age :: Int
+                     , height :: Float
+                     } deriving (Show)
+
+data Vertex = Vertex Float Float Float deriving (Show, Read, Eq)
+
+data Day = M | T | W | Th | F | Sat | S deriving (Eq, Ord, Show, Read, Bounded, Enum)
+
+type Point = Int
+data Corner = Corner Point Point deriving (Eq, Show, Read)
+data Square = Square Corner Corner deriving (Eq, Show, Read)
+
+getCorner :: Square -> Int -> Corner
+getCorner (Square c _) 0 = c
+getCorner (Square _ c) 1 = c
+
+
