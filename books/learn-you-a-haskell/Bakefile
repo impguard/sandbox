@@ -27,8 +27,11 @@ function shell ()
     hrun /bin/bash
 }
 
-bake_task ghc "Runs the haskell compiler"
-function ghc ()
+bake_task compile "Compiles the provided haskell source file"
+function compile ()
 {
-    hrun ghc --make "$@"
+    local filename output
+    filename=$(basename $1)
+    output="${filename%.*}.out"
+    hrun ghc --make -o "$output" "$filename"
 }
