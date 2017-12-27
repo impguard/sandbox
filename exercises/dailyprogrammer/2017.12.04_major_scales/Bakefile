@@ -2,20 +2,6 @@
 
 SOURCE=challenge.hs
 
-function start ()
-{
-    if ! docker ps | grep -q 'haskell'; then
-        docker run -d --rm --name haskell \
-            --workdir /workspace \
-            --volume "$(pwd)":/workspace \
-            haskell:8.2.1 /bin/bash -c 'trap : TERM INT; sleep infinity & wait' >/dev/null 2>&1
-    fi
-}
-
-function exec () {
-    start
-    command exec docker exec -it haskell "$@"
-}
 
 bake_task init "Initialize the project"
 function init ()
@@ -23,16 +9,24 @@ function init ()
     docker pull haskell:8.2.1
 }
 
+function hrun ()
+{
+    exec docker run -it --rm \
+        --workdir /workspace \
+        --volume "$(pwd)":/workspace \
+        haskell:8.2.1 "$@"
+}
+
 bake_task repl "Start a haskell repl"
 function repl ()
 {
-    exec ghci
+    hrun ghci
 }
 
-bake_task shell "Shell into the haskell environment"
+bake_task shell "Start the environment as a shell"
 function shell ()
 {
-    exec /bin/bash
+    hrun /bin/bash
 }
 
 bake_task compile "Compiles the provided haskell source file"
@@ -41,7 +35,7 @@ function compile ()
     local filename output
     filename="$(basename "$SOURCE")"
     output="${filename%.*}.out"
-    exec ghc --make -o "$output" "$filename"
+    hrun ghc --make -o "$output" "$filename"
 }
 
 bake_task run "Runs the compiled haskell source file"
@@ -57,13 +51,11 @@ function run ()
         return 1
     fi
 
-    exec ./"$output" "$@"
+    hrun ./"$output" "$@"
 }
 
-bake_task clean "Cleans up generated files and the docker environment"
+bake_task clean "Cleans up generated files"
 function clean ()
 {
-    rm -f ./*.hi ./*.o ./*.out
-    docker stop haskell >/dev/null 2>&1
-    bake_echo_green'Removed output and stopped haskell container'
+    rm ./*.hi ./*.o ./*.out
 }
