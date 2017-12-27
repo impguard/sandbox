@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE=challenge.hs
+SOURCE=${SOURCE:-challenge.hs}
 
 function start ()
 {
@@ -65,5 +65,5 @@ function clean ()
 {
     rm -f ./*.hi ./*.o ./*.out
     docker stop haskell >/dev/null 2>&1
-    bake_echo_green'Removed output and stopped haskell container'
+    bake_echo_green 'Removed output and stopped haskell container'
 }
