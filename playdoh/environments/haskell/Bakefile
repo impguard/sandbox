@@ -7,14 +7,14 @@ DOCKERFILE="$CONTEXT/Dockerfile"
 DOCKERIMAGE='haskell:fork'
 DOCKERNAME='haskell'
 
-function build.image ()
+function image:build ()
 {
     if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
         docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$CONTEXT"
     fi
 }
 
-function start ()
+function docker:start ()
 {
     build.image
     if ! docker ps | grep -q $DOCKERNAME; then
@@ -25,8 +25,8 @@ function start ()
     fi
 }
 
-function exec () {
-    start
+function docker:exec () {
+    docker:start
     command exec docker exec -it $DOCKERNAME "$@"
 }
 
@@ -39,13 +39,13 @@ function init ()
 bake_task repl "Start a haskell repl"
 function repl ()
 {
-    exec ghci
+    docker:exec ghci
 }
 
 bake_task shell "Shell into the haskell environment"
 function shell ()
 {
-    exec /bin/bash
+    docker:exec /bin/bash
 }
 
 bake_task compile "Compiles the provided haskell source file"
@@ -54,7 +54,7 @@ function compile ()
     local filename output
     filename="$(basename "$SOURCE")"
     output="${filename%.*}.out"
-    exec ghc --make -o "$output" "$filename"
+    docker:exec ghc --make -o "$output" "$filename"
 }
 
 bake_task run "Runs the compiled haskell source file"
@@ -70,7 +70,7 @@ function run ()
         return 1
     fi
 
-    exec ./"$output" "$@"
+    docker:exec ./"$output" "$@"
 }
 
 bake_task clean "Cleans up generated files and the docker environment"
