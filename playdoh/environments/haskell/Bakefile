@@ -5,6 +5,7 @@ SOURCE=${SOURCE:-challenge.hs}
 CONTEXT=$(dirname "${BASH_SOURCE[0]}")
 DOCKERFILE="$CONTEXT/Dockerfile"
 DOCKERIMAGE='haskell:fork'
+DOCKERNAME='haskell'
 
 function build.image ()
 {
@@ -16,8 +17,8 @@ function build.image ()
 function start ()
 {
     build.image
-    if ! docker ps | grep -q haskell; then
-        docker run -d --rm --name haskell \
+    if ! docker ps | grep -q $DOCKERNAME; then
+        docker run -d --rm --name $DOCKERNAME \
             --workdir /workspace \
             --volume "$(pwd)":/workspace \
             "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait'
@@ -26,7 +27,7 @@ function start ()
 
 function exec () {
     start
-    command exec docker exec -it haskell "$@"
+    command exec docker exec -it $DOCKERNAME "$@"
 }
 
 bake_task init "Initialize the project"
@@ -76,6 +77,6 @@ bake_task clean "Cleans up generated files and the docker environment"
 function clean ()
 {
     rm -f ./*.hi ./*.o ./*.out
-    docker stop haskell >/dev/null 2>&1
+    docker stop $DOCKERNAME >/dev/null 2>&1
     bake_echo_green 'Removed output and stopped haskell container'
 }
