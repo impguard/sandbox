@@ -2,13 +2,25 @@
 
 SOURCE=${SOURCE:-challenge.hs}
 
+CONTEXT=$(dirname "${BASH_SOURCE[0]}")
+DOCKERFILE="$CONTEXT/Dockerfile"
+DOCKERIMAGE='haskell:fork'
+
+function build.image ()
+{
+    if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
+        docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$CONTEXT"
+    fi
+}
+
 function start ()
 {
-    if ! docker ps | grep -q 'haskell'; then
+    build.image
+    if ! docker ps | grep -q haskell; then
         docker run -d --rm --name haskell \
             --workdir /workspace \
             --volume "$(pwd)":/workspace \
-            haskell:8.2.1 /bin/bash -c 'trap : TERM INT; sleep infinity & wait' >/dev/null 2>&1
+            "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait'
     fi
 }
 
