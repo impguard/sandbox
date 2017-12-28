@@ -7,7 +7,7 @@ DOCKERFILE="$CONTEXT/Dockerfile"
 DOCKERIMAGE='haskell:fork'
 DOCKERNAME='haskell'
 
-function image:build ()
+function docker:build ()
 {
     if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
         docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$CONTEXT"
@@ -16,7 +16,7 @@ function image:build ()
 
 function docker:start ()
 {
-    build.image
+    docker:build
     if ! docker ps | grep -q $DOCKERNAME; then
         docker run -d --rm --name $DOCKERNAME \
             --workdir /workspace \
