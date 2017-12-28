@@ -21,7 +21,7 @@ function start ()
         docker run -d --rm --name $DOCKERNAME \
             --workdir /workspace \
             --volume "$(pwd)":/workspace \
-            "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait'
+            "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait' 2>/dev/null 1>&2
     fi
 }
 
