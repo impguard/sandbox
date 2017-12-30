@@ -6,4 +6,5 @@ RUN apt-get update && \
     apt-get install xz-utils make && \
     stack upgrade
 
+RUN stack update
 RUN stack install hfmt

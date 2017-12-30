@@ -39,7 +39,7 @@ function init ()
 bake_task repl "Start a haskell repl"
 function repl ()
 {
-    docker:exec ghci
+    docker:exec ghci "$@"
 }
 
 bake_task shell "Shell into the haskell environment"
