@@ -35,3 +35,9 @@ function compile ()
     output="${filename%.*}.out"
     hrun ghc --make -o "$output" "$filename"
 }
+
+bake_task clean "Cleans compilation files, leaves the binaries"
+function clean ()
+{
+    rm -rf *.hi *.o
+}
