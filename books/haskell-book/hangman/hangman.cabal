@@ -1,0 +1,23 @@
+name:                hangman
+version:             0.1.0.0
+synopsis:            Playing Hangman
+description:         A Hangman game made following the Haskell Book
+homepage:            https://github.com/impguard/sandbox/tree/master/books/haskell-book/hangman/README.md
+license:             BSD3
+license-file:        LICENSE
+author:              Kevin Wu
+maintainer:          contact@kevinwu.io
+copyright:           2017 Kevin Wu
+category:            Game
+extra-source-files:  data/dict.txt
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable hangman
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , random
+                     , split

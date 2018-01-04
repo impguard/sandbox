@@ -2,15 +2,15 @@
 
 SOURCE=${SOURCE:-challenge.hs}
 
-CONTEXT=$(dirname "${BASH_SOURCE[0]}")
-DOCKERFILE="$CONTEXT/Dockerfile"
+DOCKERCONTEXT=$(dirname "${BASH_SOURCE[0]}")
+DOCKERFILE="$DOCKERCONTEXT/Dockerfile"
 DOCKERIMAGE='haskell:fork'
 DOCKERNAME='haskell'
 
 function docker:build ()
 {
     if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
-        docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$CONTEXT"
+        docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$DOCKERCONTEXT"
     fi
 }
 
