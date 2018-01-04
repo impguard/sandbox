@@ -1,0 +1,41 @@
+name:                ch14
+version:             0.1.0.0
+description:         Exercises for the Haskell Book ch14
+homepage:            https://github.com/impguard/sandbox/tree/master/books/haskell-book/ch14/README.md
+license:             BSD3
+license-file:        LICENSE
+author:              Kevin Wu
+maintainer:          contact@kevinwu.io
+copyright:           2017 Kevin Wu
+category:            Text
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+  exposed-modules:     Morse
+                     , Exercises
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , containers
+
+executable ch14
+  main-is:             Main.hs
+  hs-source-dirs:      exe
+  build-depends:       base >= 4.7 && < 5
+                     , QuickCheck
+                     , containers
+                     , ch14
+  default-language:    Haskell2010
+
+test-suite tests
+  type:                exitcode-stdio-1.0
+  main-is:             Test.hs
+  hs-source-dirs:      tests
+  build-depends:       base
+                     , containers
+                     , ch14
+                     , QuickCheck
+                     , hspec
+  default-language:    Haskell2010
