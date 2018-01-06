@@ -19,10 +19,6 @@ prop_monoidRightIdentity a = a <> mempty == a
 prop_semigroupAssoc :: (Eq m, S.Semigroup m) => m -> m -> m -> Bool
 prop_semigroupAssoc a b c = a S.<> (b S.<> c) == (a S.<> b) S.<> c
 
-prop_combineAssoc :: (S.Semigroup b, Eq b) => Combine a b -> Combine a b -> Combine a b -> a -> Bool
-prop_combineAssoc x y z v =
-  unCombine (x S.<> y S.<> z) v == unCombine ((x S.<> y) S.<> z) v
-
 type MonoidAssoc = First' String -> First' String -> First' String -> Bool
 
 type MonoidId = First' String -> Bool

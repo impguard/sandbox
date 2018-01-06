@@ -7,6 +7,7 @@ module Chapter15
   , BoolConj
   , Combine(unCombine)
   , BoolDisj
+  , Mem(runMem)
   ) where
 
 import           Data.Semigroup
@@ -114,25 +115,28 @@ instance (CoArbitrary a, Arbitrary b) => Arbitrary (Combine a b) where
 
 -- Monoid Exercises
 -- 5.
-
-newtype BoolDisj = BoolDisj Bool deriving (Show, Eq)
+newtype BoolDisj =
+  BoolDisj Bool
+  deriving (Show, Eq)
 
 instance Monoid BoolDisj where
   mempty = BoolDisj False
-  mappend (BoolDisj True) (BoolDisj True) = BoolDisj False
+  mappend (BoolDisj True) (BoolDisj True)   = BoolDisj False
   mappend (BoolDisj False) (BoolDisj False) = BoolDisj False
-  mappend _ _ = BoolDisj True
-
+  mappend _ _                               = BoolDisj True
 
 instance Arbitrary BoolDisj where
   arbitrary = BoolDisj <$> arbitrary
 
 -- 8.
-
 newtype Mem s a = Mem
   { runMem :: s -> (a, s)
   }
 
 instance Monoid a => Monoid (Mem s a) where
   mempty = Mem $ \s -> (mempty, s)
-  mappend (Mem f) (Mem g) = Mem $ \s -> g s , f s
+  mappend (Mem f) (Mem g) =
+    Mem $ \s ->
+      let (a, s') = g s
+          (b, s'') = f s'
+      in (mappend a b, s'')
