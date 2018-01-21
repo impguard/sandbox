@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+bake_require '../../playdoh/environments/haskell/Bakefile'
+
+# shellcheck disable=SC2034
+SOURCE=main.hs
+# shellcheck disable=SC2034
+DOCKERIMAGE='haskellbook:latest'
+
+bake_task build "Builds the project"
+function build ()
+{
+  docker:exec stack build
+}
+
+bake_task repl "Loads a GHCI repl in specified project"
+function repl ()
+{
+  local project=$1
+  shift
+
+  docker:exec bash -c "cd $project && stack ghci $*"
+}

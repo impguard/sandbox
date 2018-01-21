@@ -5,7 +5,7 @@ bake_require '../../../playdoh/environments/haskell/Bakefile'
 # shellcheck disable=SC2034
 SOURCE=main.hs
 # shellcheck disable=SC2034
-DOCKERIMAGE='ch14:latest'
+DOCKERIMAGE='ch15:latest'
 
 bake_task build "Builds the project"
 function build ()
