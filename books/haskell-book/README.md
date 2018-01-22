@@ -14,6 +14,20 @@ bake init   # Initialize by pulling down the Haskell container
 bake shell  # Builds and runs the container before shelling into the environment
 ```
 
+How to run
+----------
+
+For chapters without a stack project, run the repl and load a file to test out
+various functions.
+
+For chapters with a stack project, change to the chapter directory and run:
+
+```
+cd ch16
+stack build
+stack exec ch16
+```
+
 Notes
 -----
 
