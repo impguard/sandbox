@@ -1,4 +1,0 @@
-bake_require '../../../playdoh/environments/haskell/Bakefile'
-
-# shellcheck disable=SC2034
-SOURCE=main.hs

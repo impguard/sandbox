@@ -1,23 +1,83 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-bake_require '../../playdoh/environments/haskell/Bakefile'
+DOCKERIMAGE='haskell-book'
+DOCKERNAME='haskell-book'
 
-# shellcheck disable=SC2034
-SOURCE=main.hs
-# shellcheck disable=SC2034
-DOCKERIMAGE='haskellbook:latest'
-
-bake_task build "Builds the project"
-function build ()
+function docker:build ()
 {
-  docker:exec stack build
+  if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
+    docker build -t "$DOCKERIMAGE" .
+  fi
 }
 
-bake_task repl "Loads a GHCI repl in specified project"
+function docker:start ()
+{
+  docker:build
+  if ! docker ps | grep -q $DOCKERNAME; then
+    docker run -d --rm --name $DOCKERNAME \
+      --workdir /workspace \
+      --volume "$(pwd)":/workspace \
+      "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait' 2>/dev/null 1>&2
+  fi
+}
+
+function docker:exec () {
+  docker:start
+  command exec docker exec -it $DOCKERNAME "$@"
+}
+
+bake_task init "Initialize the project"
+function init ()
+{
+  docker pull haskell:8.2.1
+}
+
+bake_task repl "Start a haskell repl"
 function repl ()
 {
-  local project=$1
+  docker:exec ghci "$@"
+}
+
+bake_task shell "Shell into the haskell environment"
+function shell ()
+{
+  docker:exec /bin/bash
+}
+
+bake_task stop "Stops the docker environment"
+function stop ()
+{
+  docker stop $DOCKERNAME >/dev/null 2>&1
+  bake_echo_green "Stopped $DOCKERNAME container"
+}
+
+bake_task compile "Compiles the selected haskell source file"
+function compile ()
+{
+  if [ -z "$1" ]; then
+    bake_echo_red "Please pass a file to compile"
+  fi
+
+  local dirname basename output
+
+  dirname=$(dirname "$1")
+  basename=$(basename "$1")
+  output="$dirname/${basename%.*}.out"
+
+  docker:exec ghc --make -o "$output" "$1"
+}
+
+bake_task run "Runs the compiled haskell file"
+function run ()
+{
+  if [ -z "$1" ]; then
+    bake_echo_red "Please pass a file to run"
+  fi
+
+  local executable
+  executable=$1
+
   shift
 
-  docker:exec bash -c "cd $project && stack ghci $*"
+  docker:exec ./"$executable" "$@"
 }
