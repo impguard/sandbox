@@ -1,0 +1,13 @@
+version: '3.5'
+services:
+  haskell:
+    container_name: "$DOCKER_NAME"
+    image: "$DOCKER_IMAGE"
+    build:
+      context: "$DOCKER_CONTEXT"
+      dockerfile: "$DOCKER_FILE"
+    volumes:
+      - "$PWD:/workspace"
+    working_dir: "/workspace"
+    stdin_open: true
+    tty: true

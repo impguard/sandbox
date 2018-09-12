@@ -1,82 +1,64 @@
 #!/usr/bin/env bash
 
-SOURCE=${SOURCE:-challenge.hs}
+# shellcheck disable=SC2034
 
-DOCKERCONTEXT=$(dirname "${BASH_SOURCE[0]}")
-DOCKERFILE="$DOCKERCONTEXT/Dockerfile"
-DOCKERIMAGE='haskell:fork'
-DOCKERNAME='haskell'
+export DOCKER_CONTEXT DOCKER_FILE DOCKER_IMAGE DOCKER_NAME COMPOSE_FILE
 
-function docker:build ()
+DOCKER_CONTEXT="$(dirname "${BASH_SOURCE[0]}")"
+DOCKER_FILE="$DOCKER_CONTEXT/Dockerfile"
+DOCKER_IMAGE='haskell:fork'
+DOCKER_NAME='haskell'
+
+COMPOSE_FILE="$DOCKER_CONTEXT/docker-compose.yml"
+
+
+bake_task init "Initializes the environment"
+function init
 {
-    if [ -z "$(docker images -q "$DOCKERIMAGE")" ]; then
-        docker build -t "$DOCKERIMAGE" -f "$DOCKERFILE" "$DOCKERCONTEXT"
-    fi
+  docker pull haskell:8.2.1
 }
 
-function docker:start ()
+
+bake_task compose "Wrapper around docker compose"
+function compose
 {
-    docker:build
-    if ! docker ps | grep -q $DOCKERNAME; then
-        docker run -d --rm --name $DOCKERNAME \
-            --workdir /workspace \
-            --volume "$(pwd)":/workspace \
-            "$DOCKERIMAGE" /bin/bash -c 'trap : TERM INT; sleep infinity & wait' 2>/dev/null 1>&2
-    fi
+  docker-compose -f "$COMPOSE_FILE" "$@"
 }
 
-function docker:exec () {
-    docker:start
-    command exec docker exec -it $DOCKERNAME "$@"
-}
-
-bake_task init "Initialize the project"
-function init ()
-{
-    docker pull haskell:8.2.1
-}
 
 bake_task repl "Start a haskell repl"
 function repl ()
 {
-    docker:exec ghci "$@"
+  compose run haskell ghci "$@"
 }
 
 bake_task shell "Shell into the haskell environment"
 function shell ()
 {
-    docker:exec /bin/bash
+  compose run haskell /bin/bash
 }
 
-bake_task compile "Compiles the provided haskell source file"
+bake_task compile "Compiles a provided haskell source file"
 function compile ()
 {
-    local filename output
-    filename="$(basename "$SOURCE")"
-    output="${filename%.*}.out"
-    docker:exec ghc --make -o "$output" "$filename"
+  local filename output
+
+  if [ "$#" -lt 1 ]; then
+    bake_echo_red "usage: bake compile filename [output]"
+    exit 1
+  fi
+
+  filename=$1
+  output=${2:-compiled.out}
+
+  compose run haskell ghc --make -o "$output" "$filename"
 }
 
-bake_task run "Runs the compiled haskell source file"
-function run ()
-{
-    local filename output
-    filename="$(basename "$SOURCE")"
-    output="${filename%.*}.out"
-
-    if [ ! -f "$output" ]; then
-        bake_echo_red 'Please compile first:'
-        bake_echo_yellow "  bake compile $SOURCE"
-        return 1
-    fi
-
-    docker:exec ./"$output" "$@"
-}
 
 bake_task clean "Cleans up generated files and the docker environment"
 function clean ()
 {
-    rm -f ./*.hi ./*.o ./*.out
-    docker stop $DOCKERNAME >/dev/null 2>&1
-    bake_echo_green 'Removed output and stopped haskell container'
+  rm -f ./*.hi ./*.o ./*.out
+  compose stop
+  bake_echo_green 'Removed generated output and stopped haskell container'
 }
