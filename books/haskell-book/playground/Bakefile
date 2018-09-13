@@ -2,6 +2,13 @@
 
 bake_require '../../../playdoh/environments/haskell/Bakefile'
 
-export DOCKER_FILE="$PWD/Dockerfile"
+export COMPOSE_FILE="$PWD/docker-compose.yml"
 export DOCKER_IMAGE="haskell:playground"
 export DOCKER_NAME="haskell-playground"
+
+
+bake_task repl "Starts a stack ghci repl"
+function repl
+{
+  compose run haskell stack ghci
+}
