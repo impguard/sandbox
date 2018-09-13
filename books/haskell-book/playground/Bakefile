@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+bake_require '../../../playdoh/environments/haskell/Bakefile'
+
+export DOCKER_FILE="$PWD/Dockerfile"
+export DOCKER_IMAGE="haskell:playground"
+export DOCKER_NAME="haskell-playground"

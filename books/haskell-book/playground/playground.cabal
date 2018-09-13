@@ -1,0 +1,19 @@
+name:                playground
+version:             0.1.0.0
+synopsis:            Simple playground for haskell concepts
+license:             BSD3
+license-file:        LICENSE
+author:              Kevin Wu
+maintainer:          contact@kevinwu.io
+category:            Learning
+build-type:          Simple
+extra-source-files:  ChangeLog.md
+cabal-version:       >=1.10
+
+library playground
+  exposed-modules:     Addition
+  ghc-options:         -Wall -fwarn-tabs
+  build-depends:       base >=4.10 && <4.11
+                     , hspec
+  hs-source-dirs:      src
+  default-language:    Haskell2010
