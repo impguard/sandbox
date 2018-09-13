@@ -127,3 +127,40 @@ data Bool = True | False
 `constants` are type and data constructors that take no arguments. Above,
 `True` and `False` are both value constants and `Bool` is a type constant since
 it's a constructor that takes no arguments.
+
+### algebra
+
+definition: one more operations and the set that they operate over.
+
+In Haskell, typeclasses are a big deal because they focus on allowing a user to
+identify common patterns or operations and then create a "typeclass" to
+generalize the set of types these operations operate over.
+
+### monoid
+
+definition: a binary associative operation with an identity
+
+So something is a monoid if it supports a binary associative operation...so an
+operation that takes two arguments (think addition or subtraction) that is
+associative. This means that I can swap the arguments around.
+
+It must also have an "identity" which I presume is a value that when operated
+with any other value in the data type (with the binary associative operation)
+returns the other operation.
+
+Common examples: summation, multiplication
+
+Laws that a monoid follows:
+
+```
+mappend mempty x = x
+mappend x mempty = x
+
+mappend x y = mappend y x
+mappend x (mappend y z) = mappend (mappend x y) z
+```
+
+Thinking of monoid as a way of "combining" values together makes sense.
+However, it might be better to think of it as finding a "summary" for the set.
+For example, numbers are monoidal under max, but that doesn't really combine
+anything.
