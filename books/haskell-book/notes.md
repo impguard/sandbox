@@ -128,6 +128,18 @@ data Bool = True | False
 `True` and `False` are both value constants and `Bool` is a type constant since
 it's a constructor that takes no arguments.
 
+type constant
+: type constructor with no arguments
+: a concrete type that can't be parameterized
+type constructor
+: a parameterizable type
+value constants
+: a constant value that that doesn't need further arguments
+value constructor
+: a value that needs further arguments to fully flush out the value
+nullary
+: a value or type constructor is nullary if it takes no arguments
+
 ### algebra
 
 definition: one more operations and the set that they operate over.
@@ -164,3 +176,144 @@ Thinking of monoid as a way of "combining" values together makes sense.
 However, it might be better to think of it as finding a "summary" for the set.
 For example, numbers are monoidal under max, but that doesn't really combine
 anything.
+
+### semigroup
+
+Semigroups is a superset of monoids in that every monoid must be a semigroup
+but every semigroup is not necessary a monoid. Semigroups don't support the
+mempty property. The clearest example of a semigroup is a NonEmpty list.
+
+You can "mappend" two NonEmpty lists but there's no "identity" since, by
+definition, a non empty list must be... non empty.
+
+### functors
+
+Functors are a category of data types that support the ability to "map" a
+function or apply a function over the values it contains while leaving the
+structure intact.
+
+Saying the above in different words...the key thing about functors is that it
+leaves the structure untouched and applies the function to the value it
+contains.
+
+### eta-reducing
+
+Dropping the abstraction over a function. An eta reduction would be moving from
+`\x -> abs x` to `abs`. An eta abstraction is going the opposite direction.
+
+### pragmas
+
+An easy way to understand pragmas is to correlate to what Babel does for
+Javascript and its "plugins". At the end of the day, a compiler takes a
+language and...
+
+1. tokenizes it
+2. parses it to an AST
+3. compiles it down to machine code
+
+During each stage, you could theoretically build a "plugin system" that, after
+potentially the default behaviour of the compiler", does some additional stuff
+while maintaining that the output of the stage remains the same.
+
+To be honest, this plugin system probably takes the form of having "functions"
+that can be run after each stage, should the plugin writer choose so.
+
+For example, the plugin can...
+
+1. add some more tokens to be considered when tokenizing
+2. adjust the parser to recognize how to leverage those tokens and create
+   additional AST nodes.
+3. handle the new or modified AST nodes to create different code.
+
+Alternatively, a plugin can choose to only affect some of the stages rather
+than all.  For example, an optimization plugin can choose to adjust how AST
+nodes get converted to actual code to better optimize the final output.
+
+More concretely, let's imagine how Babel might handle the "ES5" vs. "ES6"
+plugins. My thoughts are that Babel exposes a few functions that these plugins
+can choose to override to control how it handles compiling ES6 code to
+Javascript. Each plugin allows for a different set of behaviour (for example,
+supporting import syntax or const/let or foreach etc.) and handles how to lex,
+parse, and compile code that looks like ES5 or ES6. In fact, the plugin system
+might be so advanced that each plugin can further be customized via options to
+target specific outputs, so while the generic ES6 plugin has a general strategy
+for adjusting how one tokenizes or parses or compiles code, adjusting an option
+to target Node vs. Chrome might cause it to output very different code.
+
+In Haskell, these language "pragmas" are similar. Under the hood, the compiler
+probably supports "plugins" that adjust how it chooses to lex, parse, and
+compile the code. However, unlike Babel which uses a simple JSON file to
+configure which plugins are enabled and their associated options, Haskell
+chooses to have comment blocks of a specific format be the switches for certain
+plugins/features.
+
+These features end up being compiler specific since they're very much
+essentially toggles for the compiler to compile slightly differently, and you
+need to really understand what the option is doing to compile your code
+differently.
+
+Back to concrete examples, you could imagine that the compiler doesn't support
+a fancy string syntax sugar and one can't just write "hi" for a string and must
+write ['h', 'i']. That's painful but maybe it makes sense. Then, you turn a
+pragma on and the compiler will now properly lex "hi" into a token, and perhaps
+the parser can convert the "hi" token into an array so the compiler doesn't
+need to worry about a "string" node in the AST.
+
+I can imagine this makes compilers an order of magnitude more complicated,
+however.  Now you have to deal with understanding how to customize your
+compiler behaviour and make sure that different feature flags are compatible
+with one another. You wouldn't want one pragma supporting "hi" in one way and
+another pragma supporting it in another way.
+
+### applicatives
+
+They are monoidal functors.
+
+Right now, it seems like they're just like functors except the function that
+they "lift" is already lifted into the functorial structure.
+
+Similarly, the function it applies is applied over the structure of a functor
+(or applicative) and on the values themselves. However, the function is already
+lifted into the applicative/functor and isn't just a free function.
+
+Take a look at the structure of the apply operation that defines an
+applicative:
+
+```
+f (a -> b) -> f a -> f b
+```
+
+At face value when you've been using `fmap` a bunch it looks like all it does
+is it allows my one function to be lifted into the functorial structure. But
+that's more interesting than it sounds. For example....
+
+```
+[(*3), (*2)] <*> [1, 2, 3]
+```
+
+Now my "one function" is lifted into the structure, so it's not really "one
+function". If anything, you can say it's one function type being lifted into
+the functorial structure.
+
+So each function applies to my inputs, but I need a way to combine the results!
+So I smash them together, and this is where the **monoidal** part of **monoidal
+functors** comes from.
+
+A better example is the applicative instance for tuples:
+
+```
+("Woo", (+1)) <*> ("Hoo!", 0) -- ("Woo Hoo!", 1)
+```
+
+So the key thing here is your structure is being monoidally combined, which is
+why the tuple applicative instance requires the first parameter be a monoid.
+
+The reason the monoidal part of something like a list isn't super clear is
+because the way you combine lists monoidally is by...creating a bigger list. It
+is concatenation but you don't see it clearly. With something like a Maybe
+value the way you monoidally combine is by keeping either Nothing or Just so it
+also doesn't "seem monoidal".
+
+Or maybe, a better way to word the above is that combining the structures is
+transparent since there's no type parameter associated with them so it's
+inherent in how you would implement the applicative apply function.

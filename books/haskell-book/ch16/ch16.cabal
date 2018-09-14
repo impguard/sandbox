@@ -1,18 +1,17 @@
-name:                playground
+name:                ch16
 version:             0.1.0.0
-synopsis:            Simple playground for haskell concepts
+synopsis:            Chapter 16 Exercises
 license:             BSD3
 license-file:        LICENSE
 author:              Kevin Wu
 maintainer:          contact@kevinwu.io
-category:            Learning
+category:            Development
 build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Addition
-  ghc-options:         -Wall -fwarn-tabs
+  exposed-modules:     Simple
   build-depends:       base >=4.11 && <4.12
                      , hspec
                      , QuickCheck

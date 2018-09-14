@@ -10,5 +10,6 @@ export DOCKER_NAME="haskell-book"
 bake_task ghci "Starts a stack ghci repl"
 function ghci
 {
-  compose run haskell stack ghci
+  dir=${1:-playground}
+  compose run haskell bash -c "cd $dir && stack ghci"
 }
