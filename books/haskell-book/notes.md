@@ -317,3 +317,18 @@ also doesn't "seem monoidal".
 Or maybe, a better way to word the above is that combining the structures is
 transparent since there's no type parameter associated with them so it's
 inherent in how you would implement the applicative apply function.
+
+#### interesting bits
+
+One main interesting part of the applicative is the monoidal portion since it
+allows for multiple types of applicatives for any given type.
+
+A clear example is for a list, the applicative instance for a list could either
+concatenate the results or zip them together. Seems like implementation wise
+people choose to ignore this for lists, opting for creating one-off functions
+like zipLists to perform the applicative behaviour.
+
+Another example of why applicatives can be more interesting is the interaction
+between `Either` and `Validation`. By default, the applicative instance for
+`Either` simply short circuits once one error is found, but the `Validation` is
+an alternative that concatenates all the errors it finds.

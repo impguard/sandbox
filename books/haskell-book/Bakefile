@@ -6,7 +6,6 @@ export COMPOSE_FILE="$PWD/docker-compose.yml"
 export DOCKER_IMAGE="haskell:book"
 export DOCKER_NAME="haskell-book"
 
-
 bake_task ghci "Starts a stack ghci repl"
 function ghci
 {
