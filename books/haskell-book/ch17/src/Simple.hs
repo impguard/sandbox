@@ -165,3 +165,45 @@ ziplist = do
       z' = zl' $ Cons 1 (Cons 2 (Cons 3 Nil))
    in do print $ z <*> z' -- Expected 10, 4, 11
          print $ z <*> zl' (repeat' 1) -- Expected 10, 2, 9
+
+-- p.1134 Validation Applicative
+
+data Validation e a =
+    Error e
+  | Succeed a
+  deriving (Eq, Show)
+
+instance Functor (Validation e) where
+  fmap _ (Error e) = Error e
+  fmap f (Succeed a) = Succeed (f a)
+
+instance Monoid e
+      => Applicative (Validation e) where
+  pure a = Succeed a
+  Error e1 <*> Error e2 = Error (e1 <> e2)
+  Error e <*> _ = Error e
+  _ <*> Error e = Error e
+  Succeed f <*> Succeed a = Succeed (f a)
+
+instance (Arbitrary e, Arbitrary a)
+      => Arbitrary (Validation e a) where
+  arbitrary = do
+    e <- arbitrary
+    a <- arbitrary
+    oneof [return (Error e), return (Succeed a)]
+
+instance (Eq e, Eq a) => EqProp (Validation e a) where
+  (=-=) = eq
+
+testValidation = quickBatch $ applicative (undefined :: Validation [String] (String, String, Int))
+
+-- p. 1137 Combinations
+
+stops :: String
+stops = "pbtdkg"
+
+vowels :: String
+vowels = "aeiou"
+
+combos :: [a] -> [b] -> [c] -> [(a, b, c)]
+combos = liftA3 (,,)
