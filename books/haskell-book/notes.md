@@ -332,3 +332,7 @@ Another example of why applicatives can be more interesting is the interaction
 between `Either` and `Validation`. By default, the applicative instance for
 `Either` simply short circuits once one error is found, but the `Validation` is
 an alternative that concatenates all the errors it finds.
+
+### monad
+
+
