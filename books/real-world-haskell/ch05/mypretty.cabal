@@ -1,0 +1,16 @@
+Name:       mypretty
+Version:    0.1
+Synopsis:   A crappy JSON printing library
+Description:
+  A simple pretty printing library based on the exercises in the Real World
+  Haskell book.
+Author:     Kevin Wu
+Maintainer: contact@kevinwu.io
+
+Cabal-Version: >= 1.2
+
+library
+  Exposed-Modules: Prettify
+                   PrettyJSON
+                   SimpleJSON
+  Build-Depends:   base >= 2.0
