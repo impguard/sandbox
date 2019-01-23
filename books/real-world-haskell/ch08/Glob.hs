@@ -1,10 +1,10 @@
 import System.Directory (doesDirectoryExist, doesFileExist,
-                         getCurrentDirectory, getDirectoryContents)
+                         getCurrentDirectory, getDirectoryContents, listDirectory)
 
 import System.FilePath (dropTrailingPathSeparator, splitFileName, (</>))
 
 import Control.Exception (handle, SomeException)
-import Control.Monad (forM)
+import Control.Monad (forM, filterM)
 import GlobRegex (matchesGlob)
 
 isPattern :: String -> Bool
@@ -23,13 +23,18 @@ namesMatching pat
           dirs <- if isPattern dirName
                   then namesMatching (dropTrailingPathSeparator dirName)
                   else return [dirName]
-          let listDir = if isPattern baseName
-                        then listMatches
-                        else listPlain
-          pathNames <- forM dirs $ \dir -> do
-                         baseNames <- listDir dir baseName
-                         return (map (dir </>) baseNames)
-          return (concat pathNames)
+          case baseName of
+            "**" -> do
+              pathNames <- forM dirs listDirectories
+              return (concat pathNames)
+            _ -> do
+              let listDir = if isPattern baseName
+                            then listMatches
+                            else listPlain
+              pathNames <- forM dirs $ \dir -> do
+                             baseNames <- listDir dir baseName
+                             return (map (dir </>) baseNames)
+              return (concat pathNames)
 
 doesNameExist :: FilePath -> IO Bool
 doesNameExist name = do
@@ -37,6 +42,16 @@ doesNameExist name = do
   if fileExists
     then return True
     else doesDirectoryExist name
+
+listDirectories :: String -> IO [String]
+listDirectories dir = do
+  allFiles <- do
+    files <- listDirectory dir
+    return $ map (dir </>) files
+  dirs <- filterM doesDirectoryExist allFiles
+  subdirs <- forM dirs listDirectories
+  return $ dirs ++ (concat subdirs)
+
 
 listMatches :: FilePath -> String -> IO [String]
 listMatches dirName pat = do
@@ -48,12 +63,12 @@ listMatches dirName pat = do
     let names' = if isHidden pat
                  then filter isHidden names
                  else filter (not . isHidden) names
-    return (filter matcher names)
+    return (filter matcher names')
   where handler :: SomeException -> IO [String]
         handler = const (return [])
         matcher :: FilePath -> Bool
         matcher fp = case fp `matchesGlob` pat of
-                       Right _  -> True
+                       Right b  -> b
                        Left err -> error err
 
 isHidden ('.':_) = True
