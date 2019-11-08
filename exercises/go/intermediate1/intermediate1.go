@@ -23,13 +23,13 @@ func part(num int, rest []int, sum int) [][]string {
 	}
 
 	// Either I choose +
-	addResults := part(rest[0], rest[1:], sum - num)
+	addResults := part(rest[0], rest[1:], sum-num)
 	for i, r := range addResults {
 		addResults[i] = append(r, "+", numStr)
 	}
 
 	// Or I choose -
-	subResults := part(rest[0], rest[1:], sum + num)
+	subResults := part(rest[0], rest[1:], sum+num)
 	for i, r := range subResults {
 		subResults[i] = append(r, "-", numStr)
 	}
@@ -47,13 +47,13 @@ func part(num int, rest []int, sum int) [][]string {
 }
 
 func sumPossibilities(min int, max int, sum int) {
-	if (max < min) {
+	if max < min {
 		return
 	}
 
-	nums := make([]int, max - min)
+	nums := make([]int, max-min)
 	for i := max - 1; i >= min; i-- {
-		nums[max - i - 1] = i
+		nums[max-i-1] = i
 	}
 
 	results := part(max, nums, sum)
