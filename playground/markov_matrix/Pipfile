@@ -8,6 +8,7 @@ numpy = "*"
 ipython = "*"
 docopt = "*"
 matplotlib = "*"
+scipy = "*"
 
 [dev-packages]
 
