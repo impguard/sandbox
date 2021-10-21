@@ -2,17 +2,9 @@
   "name": "image-generator",
   "version": "1.0.0",
   "description": "Simple image generator.",
-  "bin": "src/main.js",
-  "pkg": {
-    "targets": [
-      "linux-x64",
-      "macos-x64",
-      "win-x64"
-    ],
-    "outputPath": "dist"
-  },
+  "main": "src/main.js",
   "scripts": {
-    "build": "pkg ."
+    "build-windows": "nexe -t windows-x64-14.15.3 -o dist/generate.exe"
   },
   "author": "Kevin Wu",
   "license": "MIT",
@@ -22,7 +14,6 @@
     "sharp": "^0.29.1"
   },
   "devDependencies": {
-    "nexe": "^4.0.0-beta.19",
-    "pkg": "^5.3.3"
+    "nexe": "^4.0.0-beta.19"
   }
 }
