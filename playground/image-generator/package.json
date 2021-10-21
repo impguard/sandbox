@@ -4,11 +4,15 @@
   "description": "Simple image generator.",
   "bin": "src/main.js",
   "pkg": {
+    "targets": [
+      "linux-x64",
+      "macos-x64",
+      "win-x64"
+    ],
     "outputPath": "dist"
   },
   "scripts": {
-    "build-linux": "pkg --targets linux-x64,macos-x64 .",
-    "build-windows": "pkg --targets win-x64 ."
+    "build": "pkg ."
   },
   "author": "Kevin Wu",
   "license": "MIT",
