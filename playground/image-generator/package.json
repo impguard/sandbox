@@ -4,21 +4,11 @@
   "description": "Simple image generator.",
   "bin": "src/main.js",
   "pkg": {
-    "targets": [
-      "linux-x64",
-      "macos-x64",
-      "win-x64"
-    ],
-    "assets": [
-      "node_modules/sharp/build/Release",
-      "node_modules/sharp/vendor/lib",
-      "node_modules/sharp/build/Release",
-      "node_modules/sharp/vendor/lib"
-    ],
     "outputPath": "dist"
   },
   "scripts": {
-    "cli": "node src/main.js"
+    "build-linux": "pkg --targets linux-x64,macos-x64 .",
+    "build-windows": "pkg --targets win-x64 ."
   },
   "author": "Kevin Wu",
   "license": "MIT",
