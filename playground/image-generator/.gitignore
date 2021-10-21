@@ -1,3 +1,6 @@
 .vim
 node_modules
 animals
+out.*
+out
+dist

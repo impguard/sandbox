@@ -2,8 +2,21 @@
   "name": "image-generator",
   "version": "1.0.0",
   "description": "Simple image generator.",
-  "main": "app.js",
-  "type": "module",
+  "bin": "src/main.js",
+  "pkg": {
+    "targets": [
+      "linux-x64",
+      "macos-x64",
+      "win-x64"
+    ],
+    "assets": [
+      "node_modules/sharp/build/Release",
+      "node_modules/sharp/vendor/lib",
+      "node_modules/sharp/build/Release",
+      "node_modules/sharp/vendor/lib"
+    ],
+    "outputPath": "dist"
+  },
   "scripts": {
     "cli": "node src/main.js"
   },
@@ -13,5 +26,9 @@
     "cartesian-product-generator": "^1.1.1",
     "docopt": "^0.6.2",
     "sharp": "^0.29.1"
+  },
+  "devDependencies": {
+    "nexe": "^4.0.0-beta.19",
+    "pkg": "^5.3.3"
   }
 }
